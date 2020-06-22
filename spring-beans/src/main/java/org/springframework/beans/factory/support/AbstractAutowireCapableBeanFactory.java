@@ -605,9 +605,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
+		// 偷天换日
 		if (earlySingletonExposure) {
+			// 只从一二级缓存中找
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {
+				// 创建的bean是否经BeanPostProcessor变成代理
 				if (exposedObject == bean) {
 					exposedObject = earlySingletonReference;
 				}
