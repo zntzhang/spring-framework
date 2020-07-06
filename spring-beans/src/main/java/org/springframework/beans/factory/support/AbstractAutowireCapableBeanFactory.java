@@ -581,6 +581,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// even when triggered by lifecycle interfaces like BeanFactoryAware.
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName));
+		// 三级缓存
 		if (earlySingletonExposure) {
 			if (logger.isTraceEnabled()) {
 				logger.trace("Eagerly caching bean '" + beanName +
@@ -607,7 +608,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// 偷天换日
 		if (earlySingletonExposure) {
-			// 只从一二级缓存中找
+			// 只从一二级缓存中找（是不是被循环依赖了）
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {
 				// 创建的bean是否经BeanPostProcessor变成代理
@@ -961,6 +962,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		Object exposedObject = bean;
 		if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
 			for (SmartInstantiationAwareBeanPostProcessor bp : getBeanPostProcessorCache().smartInstantiationAware) {
+				// 会调用事务的后置处理器AbstractAutoProxyCreator的getEarlyBeanReference方法生成代理
 				exposedObject = bp.getEarlyBeanReference(exposedObject, beanName);
 			}
 		}
